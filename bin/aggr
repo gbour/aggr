@@ -2,6 +2,7 @@
 
 import re
 import sys
+import argparse
 
 def printdict(refs):
     def _print(stack, key):
@@ -14,12 +15,13 @@ def printdict(refs):
     _print(refs, [])
 
 if __name__ == '__main__':
-    regex = sys.argv[1]
-    print(regex, sys.stdin)
+    parser = argparse.ArgumentParser('Aggregate text lines.')
+    parser.add_argument('-m', '--match', required=True, metavar='REGEX', help='matching regex')
+    parser.add_argument('files', nargs='*', help='files to aggregate')
+    args = parser.parse_args()
+    print(args.match, args.files)
 
-    regex = re.compile(sys.argv[1])
-    print(regex)
-
+    regex = re.compile(args.match)
     refs = dict()
 
     for line in sys.stdin:
@@ -36,4 +38,6 @@ if __name__ == '__main__':
         ptr[m.groups()[-1]] = count + 1
 
     #print(refs)
+    #import time; time.sleep(30)
+    print("generating report...")
     printdict(refs)
