@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+
+import re
+import sys
+
+def printdict(refs):
+	def _print(stack, key):
+		for k, v in stack.items():
+			if isinstance(v, dict):
+				_print(v, key+[k]); continue
+
+			print("%3d - %s" % (v, '::'.join(key+[k])))
+
+	_print(refs, [])
+
+if __name__ == '__main__':
+	regex = sys.argv[1]
+	print(regex, sys.stdin)
+
+	regex = re.compile(sys.argv[1])
+	print(regex)
+
+	refs = dict()
+
+	for line in sys.stdin:
+		m = regex.search(line[:-1])
+		if m is None:
+			continue
+
+		#print("line>", line[:-1])
+		#print(m.groups())
+		ptr = refs
+		for item in m.groups()[:-1]:
+			ptr = ptr.setdefault(item, dict())
+		count = ptr.get(m.groups()[-1], 0)
+		ptr[m.groups()[-1]] = count + 1
+
+	#print(refs)
+	printdict(refs)
